@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AnalogMeterProject", "AnalogMeterProject\AnalogMeterProject.pyproj", "{73A1E119-DF9C-4BE5-8E25-51E478857A33}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73A1E119-DF9C-4BE5-8E25-51E478857A33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73A1E119-DF9C-4BE5-8E25-51E478857A33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {545856C5-A58D-4E0A-B5DC-D3E34F207BA8}
+	EndGlobalSection
+EndGlobal
