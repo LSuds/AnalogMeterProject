@@ -1,3 +1,4 @@
+from tkinter import ROUND
 import GPUtil
 import time 
 import socket
@@ -12,15 +13,16 @@ message, address = server_socket.recvfrom(1024)
 while(1):
     Gpus = GPUtil.getGPUs()
     CpuCores = psutil.cpu_percent(interval=1, percpu=True) 
+    MemSwap = psutil.swap_memory()
 
     systemStatJson = {
         "CpuStat":[],
         "GpuStat":[],
-        "MemStat":[]
+        "MemStat":[],
+        "StorageStat":[]
     }
 
     #FETCH CPU CORE STATS AND ADD TO JSON
-    print('CPU Stats:')
     for cpu in CpuCores:
         roundedCoreUtil = round(cpu)
         systemStatJson["CpuStat"].append(roundedCoreUtil)
@@ -34,10 +36,18 @@ while(1):
         systemStatJson["GpuStat"].append(gpu_info)
 
     #FETCH MEMORY UTIL AND ADD TO JSON
-    roundedMemPercentUsage = round(psutil.virtual_memory()[2])
-    systemStatJson["MemStat"].append(roundedMemPercentUsage)
+    mem_info = {
+        "Mem_Percent_Usage": round(psutil.virtual_memory()[2]),
+        "Mem_Swap": round(MemSwap.percent)
+    }
+    systemStatJson["MemStat"].append(mem_info)
 
+    #FETCH DISK STATS AND ADD TO JSON
+    for part in psutil.disk_partitions(all=False):
+        usage = psutil.disk_usage(part.mountpoint)
+        systemStatJson["StorageStat"].append(round(usage.percent))
 
+    #ENCODE JSON AND SEND TO CLIENT
     message = json.dumps(systemStatJson, indent=4)
     server_socket.sendto(message.encode(), address)
     print(systemStatJson)
