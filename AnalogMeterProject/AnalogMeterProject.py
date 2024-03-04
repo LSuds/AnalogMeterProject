@@ -9,33 +9,53 @@ import json
 #Internet speed in MB/s
 NETWORK_MAX_DOWNLOAD = 5
 NETWORK_MAX_UPLOAD = 5
+_last_net_io_meta = None
+
+def net_io_usage():
+    global _last_net_io_meta
+
+    net_counters = psutil.net_io_counters()
+    tst = time.time()
+
+    send_bytes = net_counters.bytes_sent
+    recv_bytes = net_counters.bytes_recv
+    err_in = net_counters.errin
+    err_out = net_counters.errout
+    
+    if _last_net_io_meta is None:
+        _last_net_io_meta = (send_bytes, recv_bytes, tst)
+        return [0,0,0,0]
+
+    last_send_bytes, last_recv_bytes, last_time = _last_net_io_meta
+    delta_time = tst - last_time
+    recv_speed = (recv_bytes - last_recv_bytes) / delta_time
+    send_speed = (send_bytes - last_send_bytes) / delta_time
+
+    _last_net_io_meta = (send_bytes, recv_bytes, tst)
+    return [recv_speed, send_speed, err_in, err_out]
 
 def Fetch_Net_Usage(): 
-    net_stat = psutil.net_io_counters()
-    net_in_1 = net_stat.bytes_recv
-    net_out_1 = net_stat.bytes_sent
-    net_in_error = 0
-    net_out_error = 0
-    net_in_percent = 0
-    net_out_percent = 0
+    net_stat = net_io_usage()
+    net_in_1 = net_stat[0]
+    net_out_1 = net_stat[1]
+    net_in_error = net_out_error = net_in_percent = net_out_percent = 0
     
     #round to MB/s with 0 decimals
     net_in = round((net_in_1) / 1024 / 1024)
     net_out = round((net_out_1) / 1024 / 1024)
 
-    print(net_in)
     #convert to a percentage based on the users internet package
     if(net_in != 0):    
         net_in_percent = Percent_Safety_Check(round((net_in / NETWORK_MAX_DOWNLOAD) * 100))
     if(net_out != 0):    
         net_out_percent = Percent_Safety_Check(round((net_out / NETWORK_MAX_UPLOAD) * 100))
-    if(net_stat.errin + net_stat.dropin > 0):
+    if(net_stat[2] > 0):
         net_in_error = 100
-    if(net_stat.errout + net_stat.dropout > 0):
+    if(net_stat[3] > 0):
         net_out_error = 100
         
     return { "Network_In": net_in_percent,"Network_In_Err":net_in_error, "Network_Out": net_out_percent, "Network_Out_Err": net_out_error}
-        
+
 def Percent_Safety_Check(percent):
     if(percent > 100):
         return 100
