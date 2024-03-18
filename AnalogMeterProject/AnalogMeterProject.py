@@ -54,7 +54,7 @@ def Fetch_Net_Usage():
     if(net_stat[3] > 0):
         net_out_error = 100
         
-    return { "Network_In": net_in_percent,"Network_In_Err":net_in_error, "Network_Out": net_out_percent, "Network_Out_Err": net_out_error}
+    return [ net_in_percent, net_in_error, net_out_percent, net_out_error]
 
 def Percent_Safety_Check(percent):
     if(percent > 100):
@@ -72,41 +72,50 @@ while(1):
     MemSwap = psutil.swap_memory()
 
     systemStatJson = {
-        "Cpu":[], #8 values
-        "Gpu":[], #2 values
-        "Mem":[], #2 values
-        "Storage":[], #4 values
-        "Network":[] # 4 values
+        "Data":[], 
     }
 
     #FETCH CPU CORE STATS AND ADD TO JSON
+    print("CPU Data")
     for cpu in range(0, int(len(CpuCores)/2)):
         #we dont have enough meters to display all threads. Lets do some averages and merge
         roundedCoreUtil = round((CpuCores[cpu*2] + CpuCores[cpu*2+1])/2)
-        systemStatJson["Cpu"].append(roundedCoreUtil)
+        print(roundedCoreUtil)
+        systemStatJson["Data"].append(roundedCoreUtil)
 
     #FETCH GPU STATS AND ADD TO JSON
+    print("GPU Data")
     for gpu in Gpus:
-        gpu_info = {
-            "Gpu_Usage": round(gpu.load*100),
-            "Gpu_Mem_Usage": round(gpu.memoryUtil*100)
-        }
-        systemStatJson["Gpu"].append(gpu_info)
+        load = round(gpu.load*100)
+        memoryUtil = round(gpu.memoryUtil*100)
+        print(load)
+        print(memoryUtil)
+        systemStatJson["Data"].append(load)
+        systemStatJson["Data"].append(memoryUtil)
 
     #FETCH MEMORY UTIL AND ADD TO JSON
-    mem_info = {
-        "Mem_Percent_Usage": round(psutil.virtual_memory()[2]),
-        "Mem_Swap": round(MemSwap.percent)
-    }
-    systemStatJson["Mem"].append(mem_info)
+    print("Memory Data")
+    memPercentUsage = round(psutil.virtual_memory()[2])
+    memSwap = round(MemSwap.percent)
+    print(memPercentUsage)
+    print(memSwap)
+    systemStatJson["Data"].append(memPercentUsage)
+    systemStatJson["Data"].append(memSwap)
 
     #FETCH DISK STATS AND ADD TO JSON
+    print("Storage Data")
     for part in psutil.disk_partitions(all=False):
         usage = psutil.disk_usage(part.mountpoint)
-        systemStatJson["Storage"].append(round(usage.percent))
+        roundedUsage = round(usage.percent)
+        print(roundedUsage)
+        systemStatJson["Data"].append(roundedUsage)
         
     #FETCH NETWORK STATS AND ADD TO JSON
-    systemStatJson["Network"].append(Fetch_Net_Usage())
+    print("Network Data")
+    networkUsage = Fetch_Net_Usage()
+    for networkStat in networkUsage:
+        print(networkStat)
+        systemStatJson["Data"].append(networkStat)
 
     #ENCODE JSON AND SEND TO CLIENT
     message = json.dumps(systemStatJson, indent=4)
