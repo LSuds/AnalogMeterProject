@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>73a1e119-df9c-4be5-8e25-51e478857a33</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>AnalogMeterProject.py</StartupFile>
+    <StartupFile>Server.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,7 +21,8 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AnalogMeterProject.py" />
+    <Compile Include="Server.py" />
+    <Compile Include="Client.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
