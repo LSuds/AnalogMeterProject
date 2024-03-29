@@ -26,7 +26,7 @@ Now, your Python program will run automatically every time your Windows 10 compu
      ```bash
      @reboot python /home/pi/client.py &
      ```
+   ![Client Setup Image](https://github.com/LSuds/AnalogMeterProject/assets/46835310/0410d6fa-2098-439e-9ccc-f05c09e41ed2)
+   
      This line instructs Cron to execute the `client.py` script using Python upon system boot, running it in the background without interrupting the boot process.
    - Save the changes and exit the Crontab editor as instructed.
-
-![Client Setup Image](https://github.com/LSuds/AnalogMeterProject/assets/46835310/0410d6fa-2098-439e-9ccc-f05c09e41ed2)
